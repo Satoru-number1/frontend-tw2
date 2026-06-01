@@ -11,7 +11,7 @@ export default defineConfig({
   server: {
     proxy: {
       '/api': {
-        target: 'https://localhost:61615',
+        target: 'https://tienda-4fke.onrender.com/',
         changeOrigin: true,
         secure: false,
       }
