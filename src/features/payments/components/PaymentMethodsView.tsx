@@ -204,7 +204,7 @@ export default function PaymentMethodsView({
                     </td>
                     <td className="py-3.5 px-5 text-right">
                       <button
-                        onClick={() => handleToggle(m.id, m.nombre, m.estado)}
+                        onClick={() => handleToggle(m.id, m.nombre)}
                         title={m.estado === "Activo" ? "Desactivar" : "Activar"}
                         className="inline-flex items-center gap-1.5 py-1.5 px-3 border border-neutral-200 dark:border-neutral-700 hover:bg-neutral-50 dark:hover:bg-neutral-800 rounded-lg text-[12px] font-semibold transition-colors cursor-pointer text-neutral-600 dark:text-neutral-400"
                       >

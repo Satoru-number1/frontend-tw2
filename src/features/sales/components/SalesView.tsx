@@ -347,7 +347,7 @@ export default function SalesView({ triggerToast }: SalesViewProps) {
 
             <div className="flex gap-2 mt-2">
               <button
-                onClick={() => handleDownloadInvoice(saleResult.venta?.ventaId)}
+                onClick={() => handleDownloadInvoice()}
                 className="flex-1 py-2.5 bg-neutral-600 hover:bg-neutral-700 text-white rounded-lg text-[12px] font-bold transition-all flex items-center justify-center gap-1.5 cursor-pointer shadow"
               >
                 <Download className="w-4 h-4" />
