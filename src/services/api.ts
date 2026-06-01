@@ -1,7 +1,11 @@
 import axios from 'axios';
 
+const baseURL = import.meta.env.DEV 
+  ? '/api' 
+  : 'https://tienda-4fke.onrender.com/api';
+
 const api = axios.create({
-  baseURL: '/api',
+  baseURL,
   headers: {
     'Content-Type': 'application/json',
   },
