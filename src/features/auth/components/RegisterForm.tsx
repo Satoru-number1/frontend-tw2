@@ -1,10 +1,18 @@
-import { UserPlus, User, Mail, Lock, Shield, Phone, MapPin } from 'lucide-react';
-import { Link, useNavigate } from 'react-router-dom';
-import Input from '../../../components/Input';
-import Button from '../../../components/Button';
-import useAuthForm from '../hooks/useAuthForm';
-import api from '../../../services/api';
-import confetti from 'canvas-confetti';
+import {
+  UserPlus,
+  User,
+  Mail,
+  Lock,
+  Shield,
+  Phone,
+  MapPin,
+} from "lucide-react";
+import { Link, useNavigate } from "react-router-dom";
+import Input from "../../../components/Input";
+import Button from "../../../components/Button";
+import useAuthForm from "../hooks/useAuthForm";
+import api from "../../../services/api";
+import confetti from "canvas-confetti";
 
 interface RegisterFormProps {
   onSuccess?: () => void;
@@ -13,103 +21,93 @@ interface RegisterFormProps {
 export default function RegisterForm({ onSuccess }: RegisterFormProps) {
   const navigate = useNavigate();
 
-  const {
-    values,
-    errors,
-    isLoading,
-    submitError,
-    handleChange,
-    handleSubmit,
-  } = useAuthForm({
-    initialValues: {
-      nombre: '',
-      apellido: '',
-      ci: '',
-      telefono: '',
-      direccion: '',
-      email: '',
-      password: '',
-      confirmPassword: '',
-    },
-    validate: (vals) => {
-      const errs: Record<string, string> = {};
-      if (!vals.nombre) {
-        errs.nombre = 'El nombre es requerido';
-      }
-      if (!vals.apellido) {
-        errs.apellido = 'El apellido es requerido';
-      }
-      if (!vals.ci) {
-        errs.ci = 'La Cédula de Identidad (CI) es requerida';
-      }
-      if (!vals.telefono) {
-        errs.telefono = 'El teléfono es requerido';
-      }
-      if (!vals.direccion) {
-        errs.direccion = 'La dirección es requerida';
-      }
-      if (!vals.email) {
-        errs.email = 'El correo electrónico es requerido';
-      } else if (!/\S+@\S+\.\S+/.test(vals.email)) {
-        errs.email = 'El correo electrónico no es válido';
-      }
-      if (!vals.password) {
-        errs.password = 'La contraseña es requerida';
-      } else if (vals.password.length < 3) {
-        errs.password = 'La contraseña debe tener al menos 3 caracteres';
-      }
-      if (vals.password !== vals.confirmPassword) {
-        errs.confirmPassword = 'Las contraseñas no coinciden';
-      }
+  const { values, errors, isLoading, submitError, handleChange, handleSubmit } =
+    useAuthForm({
+      initialValues: {
+        nombre: "",
+        apellido: "",
+        ci: "",
+        telefono: "",
+        direccion: "",
+        email: "",
+        password: "",
+        confirmPassword: "",
+      },
+      validate: (vals) => {
+        const errs: Record<string, string> = {};
+        if (!vals.nombre) {
+          errs.nombre = "El nombre es requerido";
+        }
+        if (!vals.apellido) {
+          errs.apellido = "El apellido es requerido";
+        }
+        if (!vals.ci) {
+          errs.ci = "La Cédula de Identidad (CI) es requerida";
+        }
+        if (!vals.telefono) {
+          errs.telefono = "El teléfono es requerido";
+        }
+        if (!vals.direccion) {
+          errs.direccion = "La dirección es requerida";
+        }
+        if (!vals.email) {
+          errs.email = "El correo electrónico es requerido";
+        } else if (!/\S+@\S+\.\S+/.test(vals.email)) {
+          errs.email = "El correo electrónico no es válido";
+        }
+        if (!vals.password) {
+          errs.password = "La contraseña es requerida";
+        } else if (vals.password.length < 3) {
+          errs.password = "La contraseña debe tener al menos 3 caracteres";
+        }
+        if (vals.password !== vals.confirmPassword) {
+          errs.confirmPassword = "Las contraseñas no coinciden";
+        }
 
-      return errs;
-    },
-    onSubmit: async (vals) => {
+        return errs;
+      },
+      onSubmit: async (vals) => {
+        const requestData = {
+          email: vals.email,
+          password: vals.password,
+          personaId: 0,
 
-      const requestData = {
-        email: vals.email,
-        password: vals.password,
-        personaId: 0,
-
-        nombre: vals.nombre,
-        apellido: vals.apellido,
-        ci: vals.ci,
-        telefono: vals.telefono,
-        direccion: vals.direccion,
-
-        persona: {
           nombre: vals.nombre,
           apellido: vals.apellido,
           ci: vals.ci,
           telefono: vals.telefono,
           direccion: vals.direccion,
-        }
-      };
 
-      await api.post('/auth/register', requestData);
+          persona: {
+            nombre: vals.nombre,
+            apellido: vals.apellido,
+            ci: vals.ci,
+            telefono: vals.telefono,
+            direccion: vals.direccion,
+          },
+        };
 
+        await api.post("/Auth/register", requestData);
 
-      confetti({
-        particleCount: 150,
-        spread: 80,
-        origin: { y: 0.6 },
-        colors: ['#737373', '#a8a8a8', '#262626', '#d1d1d1'],
-      });
+        confetti({
+          particleCount: 150,
+          spread: 80,
+          origin: { y: 0.6 },
+          colors: ["#737373", "#a8a8a8", "#262626", "#d1d1d1"],
+        });
 
-
-      setTimeout(() => {
-        if (onSuccess) {
-          onSuccess();
-        } else {
-          navigate('/login', { state: { registered: true } });
-        }
-      }, 1500);
-    },
-  });
+        setTimeout(() => {
+          if (onSuccess) {
+            onSuccess();
+          } else {
+            navigate("/login", { state: { registered: true } });
+          }
+        }, 1500);
+      },
+    });
 
   return (
     <div className="flex flex-col items-center w-full animate-fadeIn max-h-[80vh] overflow-y-auto px-1">
-
       <div className="flex items-center justify-center w-14 h-14 border border-neutral-300 dark:border-neutral-700 rounded-lg p-3 mb-4 bg-white dark:bg-neutral-800 shadow-sm transition-colors duration-300">
         <UserPlus className="w-full h-full text-neutral-600 dark:text-neutral-300 stroke-[1.25]" />
       </div>
@@ -129,7 +127,6 @@ export default function RegisterForm({ onSuccess }: RegisterFormProps) {
             </p>
           </div>
         )}
-
 
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-3.5">
           <Input
@@ -156,7 +153,6 @@ export default function RegisterForm({ onSuccess }: RegisterFormProps) {
           />
         </div>
 
-
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-3.5">
           <Input
             label="CI (Cédula de Identidad)"
@@ -181,7 +177,6 @@ export default function RegisterForm({ onSuccess }: RegisterFormProps) {
           />
         </div>
 
-
         <Input
           label="Dirección"
           name="direccion"
@@ -193,8 +188,6 @@ export default function RegisterForm({ onSuccess }: RegisterFormProps) {
           icon={<MapPin className="w-4 h-4" />}
           autoComplete="street-address"
         />
-
-
 
         <Input
           label="Correo electrónico"
@@ -208,7 +201,6 @@ export default function RegisterForm({ onSuccess }: RegisterFormProps) {
           autoComplete="email"
         />
 
-
         <Input
           label="Contraseña"
           name="password"
@@ -220,7 +212,6 @@ export default function RegisterForm({ onSuccess }: RegisterFormProps) {
           icon={<Lock className="w-4 h-4" />}
           autoComplete="new-password"
         />
-
 
         <Input
           label="Confirmar contraseña"
@@ -243,7 +234,7 @@ export default function RegisterForm({ onSuccess }: RegisterFormProps) {
       </form>
 
       <div className="mt-4 text-[12px] text-neutral-400 dark:text-neutral-500 select-none">
-        ¿Ya tienes una cuenta?{' '}
+        ¿Ya tienes una cuenta?{" "}
         <Link
           to="/login"
           className="font-semibold text-neutral-600 hover:text-neutral-800 dark:text-neutral-300 dark:hover:text-white transition-colors"
