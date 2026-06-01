@@ -1,6 +1,13 @@
-import { useState, useEffect } from 'react';
-import { Plus, X, CreditCard, ToggleLeft, ToggleRight, Wallet } from 'lucide-react';
-import api from '../../../services/api';
+import { useState, useEffect } from "react";
+import {
+  Plus,
+  X,
+  CreditCard,
+  ToggleLeft,
+  ToggleRight,
+  Wallet,
+} from "lucide-react";
+import api from "../../../services/api";
 
 interface PaymentMethodsViewProps {
   triggerToast: (msg: string) => void;
@@ -13,21 +20,23 @@ interface MetodoPago {
   estado: string;
 }
 
-export default function PaymentMethodsView({ triggerToast }: PaymentMethodsViewProps) {
+export default function PaymentMethodsView({
+  triggerToast,
+}: PaymentMethodsViewProps) {
   const [metodos, setMetodos] = useState<MetodoPago[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [showModal, setShowModal] = useState(false);
-  const [nombre, setNombre] = useState('');
-  const [descripcion, setDescripcion] = useState('');
+  const [nombre, setNombre] = useState("");
+  const [descripcion, setDescripcion] = useState("");
   const [isSubmitLoading, setIsSubmitLoading] = useState(false);
 
   const fetchMetodos = async () => {
     setIsLoading(true);
     try {
-      const response = await api.get('/MetodoPago');
+      const response = await api.get("/MetodoPago");
       setMetodos(response.data || []);
     } catch (err) {
-      triggerToast('Error al cargar los métodos de pago.');
+      triggerToast("Error al cargar los métodos de pago.");
     } finally {
       setIsLoading(false);
     }
@@ -40,41 +49,46 @@ export default function PaymentMethodsView({ triggerToast }: PaymentMethodsViewP
   const handleCreate = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!nombre.trim()) {
-      triggerToast('El nombre del método de pago es obligatorio.');
+      triggerToast("El nombre del método de pago es obligatorio.");
       return;
     }
     setIsSubmitLoading(true);
     try {
-      await api.post('/MetodoPago', { nombre, descripcion });
-      triggerToast('Método de pago creado exitosamente.');
+      await api.post("/MetodoPago", { nombre, descripcion });
+      triggerToast("Método de pago creado exitosamente.");
       setShowModal(false);
-      setNombre('');
-      setDescripcion('');
+      setNombre("");
+      setDescripcion("");
       fetchMetodos();
     } catch (err: any) {
-      triggerToast(err.response?.data?.mensaje || 'Error al crear el método de pago.');
+      triggerToast(
+        err.response?.data?.mensaje || "Error al crear el método de pago.",
+      );
     } finally {
       setIsSubmitLoading(false);
     }
   };
 
-  const handleToggle = async (id: number, nombreMetodo: string, estadoActual: string) => {
+  const handleToggle = async (id: number, nombreMetodo: string) => {
     try {
       const response = await api.patch(`/MetodoPago/${id}/toggle`, {});
       const nuevoEstado = response.data.nuevoEstado;
-      triggerToast(`"${nombreMetodo}" ahora está ${nuevoEstado === 'Activo' ? 'activado' : 'desactivado'}.`);
+      triggerToast(
+        `"${nombreMetodo}" ahora está ${nuevoEstado === "Activo" ? "activado" : "desactivado"}.`,
+      );
       fetchMetodos();
     } catch (err: any) {
-      triggerToast(err.response?.data?.mensaje || 'Error al cambiar el estado.');
+      triggerToast(
+        err.response?.data?.mensaje || "Error al cambiar el estado.",
+      );
     }
   };
 
-  const activos = metodos.filter(m => m.estado === 'Activo');
-  const inactivos = metodos.filter(m => m.estado !== 'Activo');
+  const activos = metodos.filter((m) => m.estado === "Activo");
+  const inactivos = metodos.filter((m) => m.estado !== "Activo");
 
   return (
     <div className="flex flex-col gap-6 animate-fadeIn">
-
       {/* Header */}
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <div>
@@ -98,16 +112,28 @@ export default function PaymentMethodsView({ triggerToast }: PaymentMethodsViewP
       {/* Stats row */}
       <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
         <div className="bg-white dark:bg-neutral-900 border border-neutral-200/80 dark:border-neutral-800/80 rounded-xl p-4">
-          <p className="text-[11px] font-bold text-neutral-400 uppercase tracking-wider mb-1">Total</p>
-          <p className="text-[28px] font-bold text-neutral-900 dark:text-white">{metodos.length}</p>
+          <p className="text-[11px] font-bold text-neutral-400 uppercase tracking-wider mb-1">
+            Total
+          </p>
+          <p className="text-[28px] font-bold text-neutral-900 dark:text-white">
+            {metodos.length}
+          </p>
         </div>
         <div className="bg-white dark:bg-neutral-900 border border-neutral-200/80 dark:border-neutral-800/80 rounded-xl p-4">
-          <p className="text-[11px] font-bold text-neutral-400 uppercase tracking-wider mb-1">Activos</p>
-          <p className="text-[28px] font-bold text-green-500">{activos.length}</p>
+          <p className="text-[11px] font-bold text-neutral-400 uppercase tracking-wider mb-1">
+            Activos
+          </p>
+          <p className="text-[28px] font-bold text-green-500">
+            {activos.length}
+          </p>
         </div>
         <div className="bg-white dark:bg-neutral-900 border border-neutral-200/80 dark:border-neutral-800/80 rounded-xl p-4">
-          <p className="text-[11px] font-bold text-neutral-400 uppercase tracking-wider mb-1">Inactivos</p>
-          <p className="text-[28px] font-bold text-neutral-400">{inactivos.length}</p>
+          <p className="text-[11px] font-bold text-neutral-400 uppercase tracking-wider mb-1">
+            Inactivos
+          </p>
+          <p className="text-[28px] font-bold text-neutral-400">
+            {inactivos.length}
+          </p>
         </div>
       </div>
 
@@ -126,32 +152,47 @@ export default function PaymentMethodsView({ triggerToast }: PaymentMethodsViewP
             <tbody className="divide-y divide-neutral-100 dark:divide-neutral-800">
               {isLoading ? (
                 <tr>
-                  <td colSpan={4} className="py-10 text-center text-neutral-400">
+                  <td
+                    colSpan={4}
+                    className="py-10 text-center text-neutral-400"
+                  >
                     Cargando métodos de pago...
                   </td>
                 </tr>
               ) : metodos.length === 0 ? (
                 <tr>
-                  <td colSpan={4} className="py-10 text-center text-neutral-400">
+                  <td
+                    colSpan={4}
+                    className="py-10 text-center text-neutral-400"
+                  >
                     No hay métodos de pago registrados.
                   </td>
                 </tr>
               ) : (
-                metodos.map(m => (
-                  <tr key={m.id} className={`hover:bg-neutral-50/40 dark:hover:bg-neutral-950/20 transition-colors ${m.estado !== 'Activo' ? 'opacity-50' : ''}`}>
+                metodos.map((m) => (
+                  <tr
+                    key={m.id}
+                    className={`hover:bg-neutral-50/40 dark:hover:bg-neutral-950/20 transition-colors ${m.estado !== "Activo" ? "opacity-50" : ""}`}
+                  >
                     <td className="py-3.5 px-5">
                       <div className="flex items-center gap-2.5">
                         <div className="w-8 h-8 rounded-lg bg-neutral-100 dark:bg-neutral-800 flex items-center justify-center">
                           <CreditCard className="w-4 h-4 text-neutral-500 dark:text-neutral-400" />
                         </div>
-                        <span className="font-bold text-neutral-900 dark:text-white">{m.nombre}</span>
+                        <span className="font-bold text-neutral-900 dark:text-white">
+                          {m.nombre}
+                        </span>
                       </div>
                     </td>
                     <td className="py-3.5 px-5 text-neutral-500 dark:text-neutral-400">
-                      {m.descipcion || <span className="text-neutral-300 dark:text-neutral-700 italic">Sin descripción</span>}
+                      {m.descipcion || (
+                        <span className="text-neutral-300 dark:text-neutral-700 italic">
+                          Sin descripción
+                        </span>
+                      )}
                     </td>
                     <td className="py-3.5 px-5">
-                      {m.estado === 'Activo' ? (
+                      {m.estado === "Activo" ? (
                         <span className="px-2.5 py-0.5 rounded-full border border-green-300 dark:border-green-900 text-green-600 dark:text-green-400 text-[10px] font-bold uppercase tracking-wider">
                           Activo
                         </span>
@@ -164,13 +205,20 @@ export default function PaymentMethodsView({ triggerToast }: PaymentMethodsViewP
                     <td className="py-3.5 px-5 text-right">
                       <button
                         onClick={() => handleToggle(m.id, m.nombre, m.estado)}
-                        title={m.estado === 'Activo' ? 'Desactivar' : 'Activar'}
+                        title={m.estado === "Activo" ? "Desactivar" : "Activar"}
                         className="inline-flex items-center gap-1.5 py-1.5 px-3 border border-neutral-200 dark:border-neutral-700 hover:bg-neutral-50 dark:hover:bg-neutral-800 rounded-lg text-[12px] font-semibold transition-colors cursor-pointer text-neutral-600 dark:text-neutral-400"
                       >
-                        {m.estado === 'Activo'
-                          ? <><ToggleRight className="w-4 h-4 text-green-500" /> Desactivar</>
-                          : <><ToggleLeft className="w-4 h-4 text-neutral-400" /> Activar</>
-                        }
+                        {m.estado === "Activo" ? (
+                          <>
+                            <ToggleRight className="w-4 h-4 text-green-500" />{" "}
+                            Desactivar
+                          </>
+                        ) : (
+                          <>
+                            <ToggleLeft className="w-4 h-4 text-neutral-400" />{" "}
+                            Activar
+                          </>
+                        )}
                       </button>
                     </td>
                   </tr>
@@ -183,7 +231,8 @@ export default function PaymentMethodsView({ triggerToast }: PaymentMethodsViewP
 
       {/* Info note */}
       <p className="text-[11px] text-neutral-400 dark:text-neutral-600 leading-relaxed">
-        ⚠️ Solo los métodos de pago con estado <strong>Activo</strong> estarán disponibles para el Cajero al momento de registrar una venta.
+        ⚠️ Solo los métodos de pago con estado <strong>Activo</strong> estarán
+        disponibles para el Cajero al momento de registrar una venta.
       </p>
 
       {/* Create Modal */}
@@ -195,14 +244,19 @@ export default function PaymentMethodsView({ triggerToast }: PaymentMethodsViewP
                 <CreditCard className="w-4 h-4 text-neutral-500" />
                 Nuevo Método de Pago
               </h3>
-              <button onClick={() => setShowModal(false)} className="p-1 hover:bg-neutral-100 dark:hover:bg-neutral-800 rounded-lg cursor-pointer">
+              <button
+                onClick={() => setShowModal(false)}
+                className="p-1 hover:bg-neutral-100 dark:hover:bg-neutral-800 rounded-lg cursor-pointer"
+              >
                 <X className="w-5 h-5 text-neutral-400" />
               </button>
             </div>
 
             <form onSubmit={handleCreate} className="flex flex-col gap-3">
               <div>
-                <label className="text-[11px] font-bold text-neutral-500 uppercase mb-1 block">Nombre *</label>
+                <label className="text-[11px] font-bold text-neutral-500 uppercase mb-1 block">
+                  Nombre *
+                </label>
                 <input
                   type="text"
                   required
@@ -213,7 +267,9 @@ export default function PaymentMethodsView({ triggerToast }: PaymentMethodsViewP
                 />
               </div>
               <div>
-                <label className="text-[11px] font-bold text-neutral-500 uppercase mb-1 block">Descripción</label>
+                <label className="text-[11px] font-bold text-neutral-500 uppercase mb-1 block">
+                  Descripción
+                </label>
                 <input
                   type="text"
                   value={descripcion}
@@ -236,7 +292,7 @@ export default function PaymentMethodsView({ triggerToast }: PaymentMethodsViewP
                   disabled={isSubmitLoading}
                   className="py-2 px-5 bg-neutral-900 hover:bg-neutral-800 dark:bg-white dark:hover:bg-neutral-100 text-white dark:text-neutral-950 rounded-lg text-[13px] font-semibold shadow-md transition-colors cursor-pointer disabled:opacity-50"
                 >
-                  {isSubmitLoading ? 'Creando...' : 'Crear Método'}
+                  {isSubmitLoading ? "Creando..." : "Crear Método"}
                 </button>
               </div>
             </form>
